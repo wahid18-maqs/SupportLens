@@ -246,7 +246,3 @@ The safety-check fields default to the "unsafe" value when missing from the mode
 - Support multiple brands, with per-brand intent taxonomies loaded from the (currently unused) `intents` table.
 - Add authentication/authorization in front of the API for production use.
 - Add a reranking step over retrieved evidence before it's passed to the model.
-
-## 15. License
-
-No license file is currently included in this repository. All rights are reserved by the author unless a license is added.

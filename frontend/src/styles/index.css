@@ -1,0 +1,573 @@
+/* SupportLens — dark chat-style UI. */
+
+:root {
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --color-bg: #0a0a0d;
+  --color-surface: #17181e;
+  --color-surface-2: #1e2027;
+  --color-border: #2a2c34;
+  --color-text: #f2f2f5;
+  --color-muted: #93959f;
+
+  --color-primary: #6d5ef8;
+  --color-primary-hover: #5c4de8;
+  --color-primary-soft: rgb(109 94 248 / 0.16);
+
+  --color-auto: #34d399;
+  --color-auto-bg: rgb(52 211 153 / 0.14);
+
+  --color-escalate: #f5a524;
+  --color-escalate-bg: rgb(245 165 36 / 0.14);
+
+  --color-danger: #f87171;
+
+  --radius-lg: 20px;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+}
+
+p {
+  margin: 0.4rem 0;
+}
+
+.muted {
+  color: var(--color-muted);
+}
+
+a {
+  color: var(--color-primary);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- App shell ---------- */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2.5rem 1.25rem;
+}
+
+/* ---------- Welcome (pre-analysis) ---------- */
+
+.hero {
+  margin: auto 0;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.welcome {
+  width: 100%;
+  text-align: center;
+}
+
+/* ---------- Brand header (logo + subtitle) ---------- */
+/* Centered/full-size on the welcome screen; App.tsx animates this same
+   element's move to the compact top-left form on the first submit. */
+
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.brand-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-header-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.brand-header-subtitle {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.brand-header--compact {
+  align-items: flex-start;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1.25rem 0 0.75rem;
+  background: var(--color-bg);
+  gap: 0.15rem;
+}
+
+.brand-header--compact .brand-header-subtitle {
+  font-size: 0.75rem;
+}
+
+.welcome-heading {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.welcome-description {
+  color: var(--color-muted);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* ---------- Composer ---------- */
+
+.composer {
+  text-align: left;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.composer:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.composer-textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.composer-textarea::placeholder {
+  color: var(--color-muted);
+}
+
+.composer-textarea:disabled {
+  opacity: 0.6;
+}
+
+.composer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.brand-display {
+  display: inline-flex;
+  align-items: center;
+  background: var(--color-surface);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.composer-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-pill);
+}
+
+.composer-error {
+  margin-top: 0.75rem;
+  color: var(--color-danger);
+  font-size: 0.85rem;
+}
+
+/* ---------- Example buttons ---------- */
+
+.example-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.example-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.example-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.example-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Buttons (shared) ---------- */
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.btn-small {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ---------- Conversation (post-analysis) ---------- */
+
+.conversation {
+  width: 100%;
+  max-width: 820px;
+  padding: 1rem 0 3rem;
+}
+
+.user-message-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.user-message-bubble {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.75rem 1.1rem;
+  border-radius: 18px 18px 4px 18px;
+  max-width: 80%;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* ---------- Assistant analysis card ---------- */
+
+.assistant-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 1.1rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.subsection {
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.subsection:empty {
+  display: none;
+}
+
+.reply-text {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin: 0.5rem 0 0.85rem;
+}
+
+.action-value {
+  margin-top: 0.45rem;
+}
+
+/* ---------- Decision badge ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.badge-auto {
+  color: var(--color-auto);
+  background: var(--color-auto-bg);
+}
+
+.badge-escalate {
+  color: var(--color-escalate);
+  background: var(--color-escalate-bg);
+}
+
+/* ---------- Section toggles (Historical evidence / Safety checks) ---------- */
+
+.section-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.pill-toggle:hover {
+  color: var(--color-text);
+  border-color: var(--color-primary);
+}
+
+.pill-toggle.active {
+  color: var(--color-text);
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.chevron {
+  transition: transform 0.15s ease;
+}
+
+.chevron.expanded {
+  transform: rotate(180deg);
+}
+
+/* ---------- Evidence list ---------- */
+
+.evidence-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.evidence-item {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+}
+
+.evidence-line {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+.evidence-meta {
+  margin: 0.5rem 0 0;
+  color: var(--color-muted);
+  font-size: 0.78rem;
+}
+
+/* ---------- Safety checklist ---------- */
+
+.safety-fallback-note {
+  font-size: 0.85rem;
+  margin-top: 0;
+}
+
+.safety-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.safety-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+}
+
+.safety-item.pass svg {
+  color: var(--color-auto);
+}
+
+.safety-item.fail svg,
+.safety-item.unknown svg {
+  color: var(--color-escalate);
+}
+
+/* ---------- Chat dock (persistent composer, ChatGPT-style) ---------- */
+
+.app--chat {
+  justify-content: flex-start;
+  padding-bottom: 0;
+}
+
+.turn {
+  margin-bottom: 1.75rem;
+}
+
+.turn:last-child {
+  margin-bottom: 0;
+}
+
+.loading-indicator {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  padding: 0.25rem 0;
+}
+
+.assistant-card--error {
+  color: var(--color-danger);
+}
+
+.composer-dock {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1rem 0 1.5rem;
+  background: linear-gradient(to bottom, transparent, var(--color-bg) 30%);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 600px) {
+  .app {
+    padding: 1.5rem 1rem;
+  }
+
+  .welcome-heading {
+    font-size: 1.5rem;
+  }
+
+  .assistant-card {
+    padding: 1.1rem;
+  }
+
+  .composer-footer {
+    flex-wrap: wrap;
+  }
+
+  .stat-row {
+    gap: 1.25rem;
+  }
+}

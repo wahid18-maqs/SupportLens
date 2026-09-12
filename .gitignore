@@ -1,0 +1,31 @@
+# Environment
+.env
+.env.local
+frontend/.env
+frontend/.env.local
+backend/.env
+backend/.env.local
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Python / backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.venv/
+*.pyc
+
+# Evaluation
+evaluation/results/*.json
+evaluation/results/*.jsonl
+evaluation/results/*.csv
+!evaluation/results/.gitkeep
+evaluation/__pycache__/
+
+# OS / editor
+.DS_Store
+.vscode/
+results/
+data/**

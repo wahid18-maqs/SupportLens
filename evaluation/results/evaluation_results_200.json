@@ -1,0 +1,1132 @@
+{
+  "test_set": "golden_test_set_200.csv",
+  "n_rows": 200,
+  "label_distribution": {
+    "decisions": {
+      "auto_handle": 120,
+      "escalate": 80
+    },
+    "intents": {
+      "return_request": 18,
+      "product_issue": 17,
+      "account_security": 18,
+      "order_cancellation_or_modification": 17,
+      "delivery_delay_or_missing": 37,
+      "general_inquiry": 18,
+      "product_availability": 17,
+      "account_access": 15,
+      "refund_request": 19,
+      "billing_or_payment": 19,
+      "product_question": 5
+    }
+  },
+  "baselines": {
+    "intent": {
+      "keyword": {
+        "labels": [
+          "account_access",
+          "account_security",
+          "billing_or_payment",
+          "delivery_delay_or_missing",
+          "general_inquiry",
+          "order_cancellation_or_modification",
+          "product_availability",
+          "product_issue",
+          "product_question",
+          "refund_request",
+          "return_request"
+        ],
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "report": "                                    precision    recall  f1-score   support\n\n                    account_access       1.00      1.00      1.00        15\n                  account_security       1.00      1.00      1.00        18\n                billing_or_payment       1.00      1.00      1.00        19\n         delivery_delay_or_missing       1.00      1.00      1.00        37\n                   general_inquiry       1.00      1.00      1.00        18\norder_cancellation_or_modification       1.00      1.00      1.00        17\n              product_availability       1.00      1.00      1.00        17\n                     product_issue       1.00      1.00      1.00        17\n                  product_question       1.00      1.00      1.00         5\n                    refund_request       1.00      1.00      1.00        19\n                    return_request       1.00      1.00      1.00        18\n\n                          accuracy                           1.00       200\n                         macro avg       1.00      1.00      1.00       200\n                      weighted avg       1.00      1.00      1.00       200\n\n\nTautological: build_golden_set.py sets expected_intent = keyword_intent_baseline(customer_message), so the label and the predictor are the same function. Not evidence of baseline strength."
+      }
+    },
+    "escalation": {
+      "always_escalate": {
+        "accuracy": 0.4,
+        "precision_escalate": 0.4,
+        "recall_escalate": 1.0,
+        "f1_escalate": 0.5714285714285714,
+        "report": "              precision    recall  f1-score   support\n\n auto_handle       0.00      0.00      0.00       120\n    escalate       0.40      1.00      0.57        80\n\n    accuracy                           0.40       200\n   macro avg       0.20      0.50      0.29       200\nweighted avg       0.16      0.40      0.23       200\n"
+      },
+      "always_auto_handle": {
+        "accuracy": 0.6,
+        "precision_escalate": 0.0,
+        "recall_escalate": 0.0,
+        "f1_escalate": 0.0,
+        "report": "              precision    recall  f1-score   support\n\n auto_handle       0.60      1.00      0.75       120\n    escalate       0.00      0.00      0.00        80\n\n    accuracy                           0.60       200\n   macro avg       0.30      0.50      0.38       200\nweighted avg       0.36      0.60      0.45       200\n"
+      },
+      "keyword": {
+        "accuracy": 0.64,
+        "precision_escalate": 0.6176470588235294,
+        "recall_escalate": 0.2625,
+        "f1_escalate": 0.3684210526315789,
+        "report": "              precision    recall  f1-score   support\n\n auto_handle       0.64      0.89      0.75       120\n    escalate       0.62      0.26      0.37        80\n\n    accuracy                           0.64       200\n   macro avg       0.63      0.58      0.56       200\nweighted avg       0.63      0.64      0.60       200\n"
+      }
+    }
+  },
+  "agent": {
+    "intent": {
+      "accuracy": 0.9,
+      "macro_f1": 0.85,
+      "labels": [
+        "account_access",
+        "account_security",
+        "billing_or_payment",
+        "delivery_delay_or_missing",
+        "general_inquiry",
+        "order_cancellation_or_modification",
+        "product_availability",
+        "product_issue",
+        "product_question",
+        "refund_request",
+        "return_request"
+      ],
+      "report": "Scored against keyword-derived labels; measures agreement with keyword_intent_baseline, not with human intent."
+    },
+    "escalation": {
+      "accuracy": 0.93,
+      "precision_escalate": 0.85,
+      "recall_escalate": 1.0,
+      "f1_escalate": 0.9189189189189189,
+      "report": "Escalation decision (auto_handle vs escalate), binary classification.",
+      "confusion": {
+        "TP": 80,
+        "FP": 14,
+        "FN": 0,
+        "TN": 106
+      },
+      "provenance": {
+        "supplied": {
+          "accuracy": 0.9,
+          "precision_escalate": 0.85,
+          "recall_escalate": 1.0,
+          "f1_escalate": 0.85
+        },
+        "kept": [
+          "precision_escalate",
+          "recall_escalate"
+        ],
+        "recomputed": [
+          "accuracy",
+          "f1_escalate",
+          "confusion"
+        ],
+        "reason": "The four supplied values are mutually inconsistent for n=200 with 80 positives. Anchored on the safety-critical pair and derived the rest from the confusion matrix."
+      }
+    },
+    "reply_quality": {
+      "llm_judge_scores": [
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 5,
+          "tone": 5,
+          "helpfulness": 5
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 5,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        },
+        {
+          "groundedness": 4,
+          "tone": 4,
+          "helpfulness": 4
+        }
+      ],
+      "llm_judge_scores_provenance": {
+        "synthetic": true,
+        "reason": "Only the three means were supplied. The 200 per-row dicts were constructed to reproduce those means exactly and are not real judge output. Replace with the judge_score field from evaluation/results/per_row_results_200.jsonl after a real run."
+      },
+      "human_agreement": {
+        "n_rated": 0,
+        "note": "No human_reply_rating values filled in yet in golden_test_set.csv \u2014 add some to enable LLM-vs-human agreement reporting.",
+        "claimed_external_agreement": 0.85
+      }
+    }
+  }
+}

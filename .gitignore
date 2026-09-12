@@ -18,14 +18,9 @@ backend/.venv/
 *.pyc
 
 # Evaluation
-evaluation/results/*.json
-evaluation/results/*.jsonl
-evaluation/results/*.csv
-!evaluation/results/.gitkeep
 evaluation/__pycache__/
 
 # OS / editor
 .DS_Store
 .vscode/
-results/
 data/**

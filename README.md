@@ -22,7 +22,7 @@ A support agent pastes in a customer message. SupportLens:
 - **Auto-handle / escalate recommendation** with a human-readable reason, plus three deterministic safety overrides layered on top of the model's own decision.
 - **Self-reported safety checklist** (groundedness, invented policy/refund/delivery-date/account-action, PII) returned alongside every decision.
 - **Editable, copyable suggested reply** — never dispatched to a customer by the app itself.
-- **Multi-turn chat UI** with a persistent composer, quick-fill example messages, and expandable evidence/safety-check panels per response.
+- **Multi-turn conversation context** — the frontend resends prior turns of the same conversation with each request, so a follow-up like "any update on that?" is still classified and answered correctly using earlier context. Stateless by design: the backend keeps no session or history of its own (no `session_id`, nothing persisted), so context only lives as long as the browser tab does. Retrieval itself still searches on the current message alone.
 - **Fail-safe degradation** — any missing configuration, API failure, or invalid model output falls back to a safe `escalate` response with a generic holding reply, never a fabricated confident answer.
 
 ## 3. Tech stack

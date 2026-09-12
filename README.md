@@ -1,4 +1,4 @@
-# SupportLens
+# SupportLens (Hiver-SDE-Inter-Assignment)
 
 **SupportLens** is an evidence-based AI customer-support copilot. Given an incoming customer message, it classifies the customer's intent, retrieves similar historical conversations for the brand, drafts a reply grounded in that evidence, and recommends whether the case is safe to auto-handle or should be escalated to a human — with its reasoning and safety checks shown alongside the recommendation.
 

@@ -25,9 +25,17 @@ app.add_middleware(
 )
 
 
+class ConversationTurn(BaseModel):
+    customer_message: str
+    agent_reply: str
+
+
 class AnalyzeRequest(BaseModel):
     customer_message: str = Field(..., min_length=1, description="The incoming customer message.")
     brand: str = Field(..., min_length=1, description="The brand this conversation belongs to.")
+    conversation_history: list[ConversationTurn] = Field(
+        default=[], description="Prior turns of this same conversation, oldest first, for context only."
+    )
 
 
 class EvidenceItem(BaseModel):
@@ -63,7 +71,8 @@ def health() -> dict:
 def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     """Runs the agent pipeline; falls back safely (see agent.py) if Gemini/Supabase aren't configured."""
     try:
-        result = analyze_message(request.customer_message, request.brand)
+        history = [turn.model_dump() for turn in request.conversation_history]
+        result = analyze_message(request.customer_message, request.brand, conversation_history=history)
     except Exception as exc:  # defensive: never leak internals in the response
         raise HTTPException(status_code=500, detail="Failed to analyze message") from exc
 

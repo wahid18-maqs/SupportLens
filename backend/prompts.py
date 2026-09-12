@@ -12,12 +12,17 @@ You are SupportLens, an evidence-based customer support copilot for a single bra
 
 You are given:
 1. An incoming customer message.
-2. A list of similar past conversations from the brand's own support history.
+2. Optionally, the prior turns of this same conversation (earlier customer
+   messages and your own earlier replies), for context only.
+3. A list of similar past conversations from the brand's own support history.
    Each retrieved conversation contains a customer message and the historical
    agent reply.
 
 Your task is to analyze the incoming message and produce a safe, evidence-grounded
-support decision.
+support decision. Use the prior conversation turns (if any) only to understand
+context (e.g. what was already asked or told to the customer) — classify intent,
+decide, and ground the reply based on the CURRENT incoming message and the
+retrieved evidence, not on facts stated only in earlier turns.
 
 Rules:
 
@@ -131,8 +136,13 @@ Do not include markdown, explanations outside the JSON, or additional keys.
 """
 
 
-def build_decision_prompt(customer_message: str, brand: str, evidence: list[dict]) -> str:
-    """Builds the user-turn prompt combining the brand, message, and retrieved evidence."""
+def build_decision_prompt(
+    customer_message: str,
+    brand: str,
+    evidence: list[dict],
+    conversation_history: list[dict] | None = None,
+) -> str:
+    """Builds the user-turn prompt combining the brand, prior turns (if any), message, and retrieved evidence."""
     evidence_block = "\n\n".join(
         f"[{i + 1}] (similarity={item['similarity']:.3f})\n"
         f"Customer: {item['customer_text']}\n"
@@ -140,9 +150,14 @@ def build_decision_prompt(customer_message: str, brand: str, evidence: list[dict
         for i, item in enumerate(evidence)
     )
 
+    history_block = "\n\n".join(
+        f"Customer: {turn['customer_message']}\nAgent: {turn['agent_reply']}" for turn in (conversation_history or [])
+    )
+
     return (
         f"Brand: {brand}\n\n"
-        f"Incoming customer message:\n{customer_message}\n\n"
+        + (f"Prior conversation (for context only):\n{history_block}\n\n" if history_block else "")
+        + f"Incoming customer message:\n{customer_message}\n\n"
         f"Retrieved evidence:\n{evidence_block if evidence_block else '(none found)'}\n\n"
         "Return the JSON response now."
     )

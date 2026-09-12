@@ -19,10 +19,17 @@ export interface SafetyChecks {
   [key: string]: unknown;
 }
 
+/** One prior turn of the same conversation, sent back for context only. */
+export interface ConversationTurn {
+  customer_message: string;
+  agent_reply: string;
+}
+
 /** Request body for POST /analyze. */
 export interface AnalyzeRequest {
   customer_message: string;
   brand: string;
+  conversation_history?: ConversationTurn[];
 }
 
 /** Full response from POST /analyze. */

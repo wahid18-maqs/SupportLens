@@ -5,7 +5,7 @@ import AnalysisResult from "./components/AnalysisResult";
 import ChatInput from "./components/ChatInput";
 import BrandHeader from "./components/BrandHeader";
 import { analyzeMessage } from "./api";
-import type { AnalyzeResponse } from "./types";
+import type { AnalyzeResponse, ConversationTurn } from "./types";
 
 const DEFAULT_BRAND = "AmazonHelp";
 
@@ -57,12 +57,18 @@ export default function App() {
       preSubmitRectRef.current = headerRef.current.getBoundingClientRect();
     }
 
+    // Prior completed turns of this conversation, sent back for context —
+    // a turn still loading/errored has no reply yet, so it's excluded.
+    const history: ConversationTurn[] = turns
+      .filter((t): t is typeof t & { result: AnalyzeResponse } => t.result !== null)
+      .map((t) => ({ customer_message: t.message, agent_reply: t.result.reply }));
+
     const id = crypto.randomUUID();
     setTurns((prev) => [...prev, { id, message: customerMessage, result: null, error: null, loading: true }]);
     setMessage("");
 
     try {
-      const response = await analyzeMessage(customerMessage, brand);
+      const response = await analyzeMessage(customerMessage, brand, history);
       setTurns((prev) => prev.map((t) => (t.id === id ? { ...t, result: response, loading: false } : t)));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Something went wrong. Please try again.";

@@ -214,8 +214,13 @@ def _categorical_escalation_reason(customer_message: str) -> str | None:
     return None
 
 
-def analyze_message(customer_message: str, brand: str) -> dict:
-    """Retrieves evidence, gets a structured decision from Gemini, then enforces the escalation overrides."""
+def analyze_message(customer_message: str, brand: str, conversation_history: list[dict] | None = None) -> dict:
+    """Retrieves evidence, gets a structured decision from Gemini, then enforces the escalation overrides.
+
+    conversation_history (if given) is prior turns of the SAME conversation, each a
+    {"customer_message", "agent_reply"} dict — used only as prompt context; retrieval and
+    the escalation overrides below still key off the current customer_message alone.
+    """
     evidence = _retrieve_evidence(customer_message, brand)
     evidence_dicts = _evidence_to_dicts(evidence)
     strong_evidence = _has_strong_evidence(evidence)
@@ -231,7 +236,7 @@ def analyze_message(customer_message: str, brand: str) -> dict:
         model_name=GEMINI_MODEL_NAME,
         system_instruction=DECISION_SYSTEM_PROMPT,
     )
-    prompt = build_decision_prompt(customer_message, brand, evidence_dicts)
+    prompt = build_decision_prompt(customer_message, brand, evidence_dicts, conversation_history)
 
     try:
         response = model.generate_content(

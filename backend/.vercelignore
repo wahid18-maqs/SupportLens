@@ -1,0 +1,7 @@
+.venv
+__pycache__
+**/__pycache__
+.env
+.env.local
+db/schema.sql
+db/ingest.py

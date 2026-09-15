@@ -11,7 +11,7 @@ A support agent pastes in a customer message. SupportLens:
 1. Embeds the message and retrieves the most similar past AmazonHelp conversations (customer message + the historical agent reply) from a vector-searchable store.
 2. Sends the message, brand, and retrieved evidence to Gemini in one structured call, asking it to classify intent, draft a reply grounded only in that evidence, decide `auto_handle` or `escalate`, explain why, and self-report a set of safety checks.
 3. Validates that structured response (Pydantic) — an invalid or out-of-taxonomy response is never trusted.
-4. Applies deterministic safety overrides on top of the model's decision (see [Safety and grounding](#10-safety-and-grounding)) that can only push a case from `auto_handle` to `escalate`, never the reverse.
+4. Applies deterministic safety overrides on top of the model's decision (see [Safety and grounding](#11-safety-and-grounding)) that can only push a case from `auto_handle` to `escalate`, never the reverse.
 5. Returns the intent, confidence, suggested reply, decision, reason, retrieved evidence, and the safety-check results to the frontend, which displays them for a human to review — **the suggested reply is never sent automatically**.
 
 ## 2. Features
@@ -43,7 +43,50 @@ A support agent pastes in a customer message. SupportLens:
 - [React](https://react.dev/) 18.3.1 + [TypeScript](https://www.typescriptlang.org/) 5.5.4
 - [Vite](https://vitejs.dev/) 5.4.1 (`@vitejs/plugin-react`) — dev server and build
 
-## 4. Project structure
+## 4. Architecture
+
+```mermaid
+flowchart TD
+    User["Support agent"] -->|pastes customer message| Frontend
+
+    subgraph Frontend["Frontend — React + TypeScript (Vercel)"]
+        UI["Chat UI (App.tsx)"]
+    end
+
+    subgraph Backend["Backend — FastAPI (Vercel Function)"]
+        API["/analyze endpoint (main.py)"]
+        Agent["Agent orchestration (agent.py)"]
+        Retrieval["retrieval.py"]
+        Prompts["Prompt builder (prompts.py)"]
+        Validate["Pydantic validation (LLMDecision)"]
+        Overrides["Safety overrides:\nweak evidence · categorical rules · failed self-check"]
+    end
+
+    subgraph External["External services"]
+        Pinecone[("Pinecone\nhosted embeddings")]
+        Supabase[("Supabase Postgres\n+ pgvector")]
+        Gemini[("Gemini\nintent · reply · decision · safety checks")]
+    end
+
+    Frontend -->|"POST /analyze\n(message, brand, conversation_history)"| API
+    API --> Agent
+    Agent --> Retrieval
+    Retrieval -->|embed text| Pinecone
+    Retrieval -->|match_conversations similarity search| Supabase
+    Retrieval -->|retrieved evidence| Agent
+    Agent --> Prompts
+    Prompts -->|structured JSON call| Gemini
+    Gemini -->|intent, reply, decision, reason, safety_checks| Validate
+    Validate -->|invalid → safe fallback| Overrides
+    Validate -->|valid| Overrides
+    Overrides -->|auto_handle / escalate + reason + evidence| API
+    API -->|AnalyzeResponse| Frontend
+    Frontend -->|shows reply, decision, evidence,\nsafety checks for human review| User
+```
+
+The suggested reply is always shown to a human for review — nothing in this pipeline sends a reply to a customer automatically.
+
+## 5. Project structure
 
 ```
 supportlens-hiver-assignment/
@@ -72,7 +115,7 @@ supportlens-hiver-assignment/
     └── README.md              # Evaluation methodology and results
 ```
 
-## 5. Setup and installation
+## 6. Setup and installation
 
 Prerequisites: Python 3.12, Node.js 20+, a [Supabase](https://supabase.com/) project, a [Google AI Studio](https://aistudio.google.com/) Gemini API key, and a [Pinecone](https://www.pinecone.io/) API key.
 
@@ -86,7 +129,7 @@ python3 -m venv .venv
 
 Run `backend/db/schema.sql` once in your Supabase project's SQL editor — it creates the `conversations`, `predictions`, and `intents` tables, the pgvector extension, and the `match_conversations` similarity-search function.
 
-Create `backend/.env` (see [Environment variables](#6-environment-variables)), then load the sample dataset into Supabase:
+Create `backend/.env` (see [Environment variables](#7-environment-variables)), then load the sample dataset into Supabase:
 
 ```bash
 ./.venv/bin/python db/ingest.py
@@ -103,7 +146,7 @@ npm install
 
 Create `frontend/.env` (see below).
 
-## 6. Environment variables
+## 7. Environment variables
 
 **`backend/.env`**
 
@@ -124,7 +167,7 @@ Create `frontend/.env` (see below).
 
 > **Documentation note:** the repository's `.env` files also define `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_JWKS_URL` (backend), and `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (frontend). None of these are currently read by any code in `backend/` or `frontend/src/` — they are leftover/unused and not required.
 
-## 7. Running locally
+## 8. Running locally
 
 **Backend** (from `backend/`):
 
@@ -140,7 +183,7 @@ npm run dev
 
 The frontend runs at `http://localhost:5173` (`frontend/vite.config.ts`) and talks to the backend at `VITE_API_BASE_URL` (default `http://localhost:8000`). Visit `http://localhost:8000/health` to confirm `gemini_configured` and `supabase_configured` are both `true`.
 
-## 8. API request and response example
+## 9. API request and response example
 
 ### `GET /health`
 
@@ -199,7 +242,7 @@ Response (evidence truncated to two of five items for brevity):
 
 This is a real, unedited response from a running instance (evidence list shortened for length).
 
-## 9. UI states
+## 10. UI states
 
 - **Empty (welcome)** — before any message is sent: logo, subtitle, heading, composer, and four quick-fill example buttons (`frontend/src/components/WelcomeScreen.tsx`, `ExampleButtons.tsx`).
 - **Loading** — while a request is in flight, the turn shows a plain "Analyzing…" text placeholder (no card styling) below the customer's message bubble.
@@ -209,7 +252,7 @@ This is a real, unedited response from a running instance (evidence list shorten
 
 The composer stays pinned to the bottom of the screen once a conversation has started, and the brand header animates from a centered welcome position to a compact top-left bar on the first submit.
 
-## 10. Safety and grounding
+## 11. Safety and grounding
 
 The suggested reply is a **draft for a human agent** — SupportLens never sends a reply to a customer itself. It is shown for review, is fully editable in principle (rendered as plain text, with a copy-to-clipboard action), and the `decision` field is a recommendation, not an automatic action.
 
@@ -221,7 +264,7 @@ The suggested reply is a **draft for a human agent** — SupportLens never sends
 
 The safety-check fields default to the "unsafe" value when missing from the model's response, so an incomplete or malformed self-report fails safe rather than silently passing.
 
-## 11. Error handling
+## 12. Error handling
 
 - **Missing `GEMINI_API_KEY`**: `/analyze` returns a fallback response (`decision: "escalate"`, a generic holding reply, `safety_checks.fallback: true`) instead of calling Gemini.
 - **Gemini API call fails** (network error, quota, invalid model name): caught, logged to `evaluation/results/validation_failures.jsonl`, and the same safe fallback is returned.
@@ -230,7 +273,7 @@ The safety-check fields default to the "unsafe" value when missing from the mode
 - **Any other uncaught exception** in `/analyze`: FastAPI returns `500` with a generic `"Failed to analyze message"` detail — internal error details are never leaked to the client.
 - **Frontend request failure** (network error or non-2xx response): `frontend/src/api.ts` throws, and `App.tsx` records the error on that turn only, showing an inline error message without disrupting the rest of the conversation.
 
-## 12. Known limitations
+## 13. Known limitations
 
 - **Single hardcoded brand.** The frontend always sends `brand: "AmazonHelp"` (`DEFAULT_BRAND` in `App.tsx`); there is no brand selector.
 - **Closed, fixed intent taxonomy.** The 12 intents in `backend/intents.py` are not configurable at runtime; anything that doesn't fit is classified `other` or `general_inquiry`.
@@ -240,7 +283,7 @@ The safety-check fields default to the "unsafe" value when missing from the mode
 - **Evidence retrieval only, no reranking.** The top-K results from `match_conversations` are used as-is; there is no secondary reranking step.
 - **English-language assumption.** Intent definitions and the categorical keyword rules are written for English customer messages.
 
-## 13. Future improvements
+## 14. Future improvements
 
 - Persist every `/analyze` result via the existing `save_prediction()` function for auditing and offline evaluation.
 - Support multiple brands, with per-brand intent taxonomies loaded from the (currently unused) `intents` table.
